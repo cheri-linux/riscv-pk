@@ -12,6 +12,20 @@
 #include "htif.h"
 #include <string.h>
 #include <limits.h>
+#if __has_feature(capabilities)
+#include <cheri_init_globals.h>
+#endif
+
+#if __has_feature(capabilities)
+extern void init_cap_globals(void);
+
+void init_cap_globals(void)
+{
+  cheri_init_globals3(__builtin_cheri_global_data_get(),
+    __builtin_cheri_program_counter_get(),
+    __builtin_cheri_global_data_get());
+}
+#endif
 
 pte_t* root_page_table;
 uintptr_t mem_size;

@@ -12,12 +12,15 @@
 
 typedef struct
 {
-  long gpr[32];
-  long status;
-  long epc;
-  long badvaddr;
-  long cause;
-  long insn;
+  uintptr_t gpr[32];
+  uintptr_t status;
+  uintptr_t epc;
+  uintptr_t badvaddr;
+  uintptr_t cause;
+  uintptr_t insn;
+#if __has_feature(capabilities)
+  uintptr_t ddc;
+#endif
 } trapframe_t;
 
 #define panic(s,...) do { do_panic(s"\n", ##__VA_ARGS__); } while(0)

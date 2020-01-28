@@ -19,7 +19,18 @@
 #define STR(x) XSTR(x)
 #define XSTR(x) #x
 
-#if __riscv_xlen == 64
+#ifndef	__has_feature
+#define	__has_feature(x)	0
+#endif
+
+#if __has_feature(capabilities)
+// XXX: Assumes c128 rather than c64
+# define SLL32    sllw
+# define STORE    sd
+# define LOAD     ld
+# define LWU      lwu
+# define LOG_REGBYTES 4
+#elif __riscv_xlen == 64
 # define SLL32    sllw
 # define STORE    sd
 # define LOAD     ld

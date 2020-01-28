@@ -5,6 +5,124 @@
 
   .macro save_tf
   # save gprs
+#if __has_feature(capabilities)
+  sc  c1,1*REGBYTES(c2)
+  sc  c3,3*REGBYTES(c2)
+  sc  c4,4*REGBYTES(c2)
+  sc  c5,5*REGBYTES(c2)
+  sc  c6,6*REGBYTES(c2)
+  sc  c7,7*REGBYTES(c2)
+  sc  c8,8*REGBYTES(c2)
+  sc  c9,9*REGBYTES(c2)
+  sc  c10,10*REGBYTES(c2)
+  sc  c11,11*REGBYTES(c2)
+  sc  c12,12*REGBYTES(c2)
+  sc  c13,13*REGBYTES(c2)
+  sc  c14,14*REGBYTES(c2)
+  sc  c15,15*REGBYTES(c2)
+  sc  c16,16*REGBYTES(c2)
+  sc  c17,17*REGBYTES(c2)
+  sc  c18,18*REGBYTES(c2)
+  sc  c19,19*REGBYTES(c2)
+  sc  c20,20*REGBYTES(c2)
+  sc  c21,21*REGBYTES(c2)
+  sc  c22,22*REGBYTES(c2)
+  sc  c23,23*REGBYTES(c2)
+  sc  c24,24*REGBYTES(c2)
+  sc  c25,25*REGBYTES(c2)
+  sc  c26,26*REGBYTES(c2)
+  sc  c27,27*REGBYTES(c2)
+  sc  c28,28*REGBYTES(c2)
+  sc  c29,29*REGBYTES(c2)
+  sc  c30,30*REGBYTES(c2)
+  sc  c31,31*REGBYTES(c2)
+
+  # get sr, epc, badvaddr, cause
+  cspecialr ct0,sscratchc
+  csrr   s0,sstatus
+  cspecialr ct1,sepcc
+  csrr   t2,stval
+  csrr   t3,scause
+  sc  ct0,2*REGBYTES(c2)
+  sc  cs0,32*REGBYTES(c2)
+  sc  ct1,33*REGBYTES(c2)
+  sc  ct2,34*REGBYTES(c2)
+  sc  ct3,35*REGBYTES(c2)
+
+  # get faulting insn, if it wasn't a fetch-related trap
+  li x5,-1
+  sc  c5,36*REGBYTES(c2)
+
+  # get ddc
+  cspecialr ct0,ddc
+  sc  ct0,36*REGBYTES(c2)
+1:
+  .endm
+
+  .text
+  .align 2
+  .global  trap_entry
+trap_entry:
+  cspecialrw csp, sscratchc, csp
+  bnez sp, 1f
+  cspecialr csp, sscratchc
+1:cincoffset csp,csp,-656
+  save_tf
+  move  ca0,csp
+  cjal handle_trap
+
+  mv ca0,csp
+  # don't restore sscratch if trap came from kernel
+  andi s0,s0,SSTATUS_SPP
+  bnez s0,start_user
+  cincoffset csp,csp,656
+  cspecialw sscratch,csp
+
+  .globl start_user
+start_user:
+  LOAD t0, 32*REGBYTES(ca0)
+  lc ct1, 33*REGBYTES(ca0)
+  csrw sstatus, t0
+  cspecialw sepcc, t1
+
+  # restore ddc
+  lc  ct0,36*REGBYTES(ca0)
+  cspecialw ddc,ct0
+
+  # restore c registers
+  lc  c1,1*REGBYTES(ca0)
+  lc  c2,2*REGBYTES(ca0)
+  lc  c3,3*REGBYTES(ca0)
+  lc  c4,4*REGBYTES(ca0)
+  lc  c5,5*REGBYTES(ca0)
+  lc  c6,6*REGBYTES(ca0)
+  lc  c7,7*REGBYTES(ca0)
+  lc  c8,8*REGBYTES(ca0)
+  lc  c9,9*REGBYTES(ca0)
+  lc  c11,11*REGBYTES(ca0)
+  lc  c12,12*REGBYTES(ca0)
+  lc  c13,13*REGBYTES(ca0)
+  lc  c14,14*REGBYTES(ca0)
+  lc  c15,15*REGBYTES(ca0)
+  lc  c16,16*REGBYTES(ca0)
+  lc  c17,17*REGBYTES(ca0)
+  lc  c18,18*REGBYTES(ca0)
+  lc  c19,19*REGBYTES(ca0)
+  lc  c20,20*REGBYTES(ca0)
+  lc  c21,21*REGBYTES(ca0)
+  lc  c22,22*REGBYTES(ca0)
+  lc  c23,23*REGBYTES(ca0)
+  lc  c24,24*REGBYTES(ca0)
+  lc  c25,25*REGBYTES(ca0)
+  lc  c26,26*REGBYTES(ca0)
+  lc  c27,27*REGBYTES(ca0)
+  lc  c28,28*REGBYTES(ca0)
+  lc  c29,29*REGBYTES(ca0)
+  lc  c30,30*REGBYTES(ca0)
+  lc  c31,31*REGBYTES(ca0)
+  # restore a0 last
+  lc  c10,10*REGBYTES(ca0)
+#else
   STORE  x1,1*REGBYTES(x2)
   STORE  x3,3*REGBYTES(x2)
   STORE  x4,4*REGBYTES(x2)
@@ -113,6 +231,7 @@ start_user:
   LOAD  x31,31*REGBYTES(a0)
   # restore a0 last
   LOAD  x10,10*REGBYTES(a0)
+#endif
 
   # gtfo
   sret

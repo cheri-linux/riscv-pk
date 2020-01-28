@@ -79,7 +79,16 @@ static void init_tf(trapframe_t* tf, long pc, long sp)
   memset(tf, 0, sizeof(*tf));
   tf->status = (read_csr(sstatus) &~ SSTATUS_SPP &~ SSTATUS_SIE) | SSTATUS_SPIE;
   tf->gpr[2] = sp;
+#if __has_feature(capabilities)
+  void *pcc;
+  tf->ddc = __builtin_cheri_global_data_get();
+  pcc = __builtin_cheri_program_counter_get();
+  pcc = __builtin_cheri_address_set(pcc, pc);
+  pcc = __builtin_cheri_flag_set(pcc, 0);
+  tf->epc = (uintptr_t)pcc;
+#else
   tf->epc = pc;
+#endif
 }
 
 static void run_loaded_program(size_t argc, char** argv, uintptr_t kstack_top)

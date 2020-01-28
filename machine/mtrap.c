@@ -174,9 +174,17 @@ send_ipi:
 void redirect_trap(uintptr_t epc, uintptr_t mstatus, uintptr_t badaddr)
 {
   write_csr(stval, badaddr);
+#if __has_feature(capabilities)
+  write_scr(sepcc, epc);
+#else
   write_csr(sepc, epc);
+#endif
   write_csr(scause, read_csr(mcause));
+#if __has_feature(capabilities)
+  write_scr(mepcc, read_scr(stcc));
+#else
   write_csr(mepc, read_csr(stvec));
+#endif
 
   uintptr_t new_mstatus = mstatus & ~(MSTATUS_SPP | MSTATUS_SPIE | MSTATUS_SIE);
   uintptr_t mpp_s = MSTATUS_MPP & (MSTATUS_MPP >> 1);

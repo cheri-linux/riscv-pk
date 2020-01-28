@@ -214,6 +214,17 @@
 #define rdcycle() read_csr(cycle)
 #define rdinstret() read_csr(instret)
 
+#if __has_feature(capabilities)
+
+#define read_scr(reg) ({ uintptr_t __tmp;	      \
+  asm volatile ("cspecialr %0, " #reg : "=C"(__tmp)); \
+  __tmp; })
+
+#define write_scr(reg, val) ({ \
+  asm volatile ("cspecialw " #reg ", %0" :: "CK"(val)); })
+
+#endif
+
 #endif
 
 #endif
