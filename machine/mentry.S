@@ -268,10 +268,11 @@ do_reset:
   add sp, sp, a2
 
   # Boot on the first hart
-  beqz a3, init_first_hart
+  bnez a3, 2f
+  j init_first_hart
 
   # set MSIE bit to receive IPI
-  li a2, MIP_MSIP
+2:li a2, MIP_MSIP
   csrw mie, a2
 
 .LmultiHart:
@@ -294,7 +295,9 @@ do_reset:
   # make sure our hart id is within a valid range
   fence
   li a2, MAX_HARTS
-  bltu a3, a2, init_other_hart
+  bgeu a3, a2, 1f
+  j init_other_hart
+1:
 #endif
   wfi
   j .LmultiHart
