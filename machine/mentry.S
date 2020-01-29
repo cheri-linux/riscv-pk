@@ -353,6 +353,7 @@ __trap_from_machine_mode:
   j restore_regs
 
 #if __has_feature(capabilities)
+  .globl enter_supervisor_mode
 enter_supervisor_mode:
   # Reset mstatus
   csrr t0, mstatus
