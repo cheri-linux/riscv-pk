@@ -66,7 +66,7 @@ void misaligned_load_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
 #endif
   else {
     mcause = CAUSE_LOAD_ACCESS;
-    write_csr(mcause, mcause);
+    write_csr(mcause, (__cheri_addr long)mcause);
     return truly_illegal_insn(regs, mcause, mepc, mstatus, insn);
   }
 
@@ -75,13 +75,17 @@ void misaligned_load_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
     val.bytes[i] = load_uint8_t((void *)(addr + i), mepc);
 
   if (!fp)
-    SET_RD(insn, regs, (intptr_t)val.intx << shift >> shift);
+    SET_RD(insn, regs, (long)val.intx << shift >> shift);
   else if (len == 8)
     SET_F64_RD(insn, regs, val.int64);
   else
     SET_F32_RD(insn, regs, val.intx);
 
+#if __has_feature(capabilities)
+  write_scr(mepcc, npc);
+#else
   write_csr(mepc, npc);
+#endif
 }
 
 void misaligned_store_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
@@ -133,7 +137,7 @@ void misaligned_store_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
 #endif
   else {
     mcause = CAUSE_STORE_ACCESS;
-    write_csr(mcause, mcause);
+    write_csr(mcause, (__cheri_addr long)mcause);
     return truly_illegal_insn(regs, mcause, mepc, mstatus, insn);
   }
 
@@ -141,5 +145,9 @@ void misaligned_store_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
   for (int i = 0; i < len; i++)
     store_uint8_t((void *)(addr + i), val.bytes[i], mepc);
 
+#if __has_feature(capabilities)
+  write_scr(mepcc, npc);
+#else
   write_csr(mepc, npc);
+#endif
 }
