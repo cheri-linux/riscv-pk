@@ -2,6 +2,10 @@
 
 #include "mcall.h"
 
+#if __has_feature(capabilities)
+.option nocapmode
+#endif
+
   .section ".text.init"
   .globl _start
 _start:
