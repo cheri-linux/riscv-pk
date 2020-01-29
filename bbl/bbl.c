@@ -44,9 +44,15 @@ static void protect_memory(void)
 {
   // Check to see if up to four PMP registers are implemented.
   // Ignore the illegal-instruction trap if PMPs aren't supported.
-  uintptr_t a0 = 0, a1 = 0, a2 = 0, a3 = 0, tmp, cfg;
+  unsigned long a0 = 0, a1 = 0, a2 = 0, a3 = 0, cfg;
+  uintptr_t tmp;
+#if __has_feature(capabilities)
+  asm volatile ("cllc %[tmp], 1f\n\t"
+                "cspecialrw %[tmp], mtcc, %[tmp]\n\t"
+#else
   asm volatile ("la %[tmp], 1f\n\t"
                 "csrrw %[tmp], mtvec, %[tmp]\n\t"
+#endif
                 "csrw pmpaddr0, %[m1]\n\t"
                 "csrr %[a0], pmpaddr0\n\t"
                 "csrw pmpaddr1, %[m1]\n\t"
@@ -56,8 +62,13 @@ static void protect_memory(void)
                 "csrw pmpaddr3, %[m1]\n\t"
                 "csrr %[a3], pmpaddr3\n\t"
                 ".align 2\n\t"
+#if __has_feature(capabilities)
+                "1: cspecialw mtcc, %[tmp]"
+                : [tmp] "=&C" (tmp),
+#else
                 "1: csrw mtvec, %[tmp]"
                 : [tmp] "=&r" (tmp),
+#endif
                   [a0] "+r" (a0), [a1] "+r" (a1), [a2] "+r" (a2), [a3] "+r" (a3)
                 : [m1] "r" (-1UL));
 
