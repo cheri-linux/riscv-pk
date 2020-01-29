@@ -352,6 +352,35 @@ __trap_from_machine_mode:
   jal trap_from_machine_mode
   j restore_regs
 
+#if __has_feature(capabilities)
+enter_supervisor_mode:
+  # Reset mstatus
+  csrr t0, mstatus
+  li t1, ~(MSTATUS_MPP | MSTATUS_MPIE)
+  and t0, t0, t1
+  li t1, PRV_S << 11
+  or t0, t0, t1
+  csrw mstatus, t0
+
+  # Reset mscratchc
+  li t0, MACHINE_STACK_SIZE - MENTRY_FRAME_SIZE
+  csetoffset csp, csp, t0
+  cspecialw mscratchc, csp
+
+#ifndef __riscv_flen
+  csd x0, (csp) # Zero x0's save slot.
+#endif
+
+  # Set mepcc
+  csetflags ca0, ca0, x0
+  cspecialw mepcc, ca0
+
+  # Set arguments and return
+  cmove ca0, ca1
+  cmove ca1, ca2
+  mret
+#endif
+
 do_reset:
   li x1, 0
   li x2, 0

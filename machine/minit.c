@@ -21,7 +21,7 @@ extern void init_cap_globals(void);
 
 void init_cap_globals(void)
 {
-  cheri_init_globals3(__builtin_cheri_global_data_get(),
+  cheri_init_globals_3(__builtin_cheri_global_data_get(),
     __builtin_cheri_program_counter_get(),
     __builtin_cheri_global_data_get());
 }
@@ -61,8 +61,8 @@ static void delegate_traps()
   if (!supports_extension('S'))
     return;
 
-  uintptr_t interrupts = MIP_SSIP | MIP_STIP | MIP_SEIP;
-  uintptr_t exceptions =
+  unsigned long interrupts = MIP_SSIP | MIP_STIP | MIP_SEIP;
+  unsigned long exceptions =
     (1U << CAUSE_MISALIGNED_FETCH) |
     (1U << CAUSE_FETCH_PAGE_FAULT) |
     (1U << CAUSE_BREAKPOINT) |
@@ -207,7 +207,16 @@ void setup_pmp(void)
 {
   // Set up a PMP to permit access to all of memory.
   // Ignore the illegal-instruction trap if PMPs aren't supported.
-  uintptr_t pmpc = PMP_NAPOT | PMP_R | PMP_W | PMP_X;
+  unsigned long pmpc = PMP_NAPOT | PMP_R | PMP_W | PMP_X;
+#if __has_feature(capabilities)
+  asm volatile ("cllc ct0, 1f\n\t"
+                "cspecialrw ct0, mtcc, ct0\n\t"
+                "csrw pmpaddr0, %1\n\t"
+                "csrw pmpcfg0, %0\n\t"
+                ".align 2\n\t"
+                "1: cspecialw mtcc, ct0"
+                : : "r" (pmpc), "r" (-1UL) : "t0");
+#else
   asm volatile ("la t0, 1f\n\t"
                 "csrrw t0, mtvec, t0\n\t"
                 "csrw pmpaddr0, %1\n\t"
@@ -215,8 +224,10 @@ void setup_pmp(void)
                 ".align 2\n\t"
                 "1: csrw mtvec, t0"
                 : : "r" (pmpc), "r" (-1UL) : "t0");
+#endif
 }
 
+#if !__has_feature(capabilities)
 void enter_supervisor_mode(void (*fn)(uintptr_t), uintptr_t arg0, uintptr_t arg1)
 {
   uintptr_t mstatus = read_csr(mstatus);
@@ -235,13 +246,19 @@ void enter_supervisor_mode(void (*fn)(uintptr_t), uintptr_t arg0, uintptr_t arg1
   asm volatile ("mret" : : "r" (a0), "r" (a1));
   __builtin_unreachable();
 }
+#endif
 
 void enter_machine_mode(void (*fn)(uintptr_t, uintptr_t), uintptr_t arg0, uintptr_t arg1)
 {
-  uintptr_t mstatus = read_csr(mstatus);
+  unsigned long mstatus = read_csr(mstatus);
   mstatus = INSERT_FIELD(mstatus, MSTATUS_MPIE, 0);
   write_csr(mstatus, mstatus);
+#if __has_feature(capabilities)
+  write_scr(mscratchc, MACHINE_STACK_TOP() - MENTRY_FRAME_SIZE);
+  fn = __builtin_cheri_flags_set(fn, 0);
+#else
   write_csr(mscratch, MACHINE_STACK_TOP() - MENTRY_FRAME_SIZE);
+#endif
 
   /* Jump to the payload's entry point */
   fn(arg0, arg1);
