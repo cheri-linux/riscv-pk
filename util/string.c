@@ -14,7 +14,20 @@ void* memcpy(void* dest, const void* src, size_t len)
   const char* s = src;
   char *d = dest;
 
+#if __has_feature(capabilities)
+  if (((__cheri_addr long)dest ^ (__cheri_addr long)src) %
+      sizeof(uintptr_t) == 0) {
+    int tocopy = sizeof(uintptr_t) -
+      ((__cheri_addr long)dest % sizeof(uintptr_t));
+    if (tocopy > len)
+      tocopy = len;
+    len -= tocopy;
+    for (; tocopy; tocopy--)
+      *d++ = *s++;
+    dest = d;
+#else
   if ((((uintptr_t)dest | (uintptr_t)src) & (sizeof(uintptr_t)-1)) == 0) {
+#endif
     while ((void*)d < (dest + len - (sizeof(uintptr_t)-1))) {
       *(uintptr_t*)d = *(const uintptr_t*)s;
       d += sizeof(uintptr_t);
@@ -30,14 +43,14 @@ void* memcpy(void* dest, const void* src, size_t len)
 
 void* memset(void* dest, int byte, size_t len)
 {
-  if ((((uintptr_t)dest | len) & (sizeof(uintptr_t)-1)) == 0) {
-    uintptr_t word = byte & 0xFF;
+  if ((((uintptr_t)dest | len) & (sizeof(long)-1)) == 0) {
+    unsigned long word = byte & 0xFF;
     word |= word << 8;
     word |= word << 16;
     word |= word << 16 << 16;
 
-    uintptr_t *d = dest;
-    while (d < (uintptr_t*)(dest + len))
+    unsigned long *d = dest;
+    while (d < (unsigned long*)(dest + len))
       *d++ = word;
   } else {
     char *d = dest;
