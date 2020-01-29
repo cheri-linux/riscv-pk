@@ -392,22 +392,20 @@ do_reset:
   cspecialw mtdc, ct0
 
   # switch into cap-mode
-1:auipcc ct0, %pcrel_hi(2f)
-  cincoffset ct0, ct0, %pcrel_lo(1b)
+  cllc ct0, 1f
   li t1, 1
   csetflags ct0, ct0, t1
   cjr ct0
-2:
+1:
 
   # write mtcc and make sure it sticks
-1:auipcc ct0, %pcrel_hi(trap_vector)
-  cincoffset ct0, ct0, %pcrel_lo(1b)
+  cllc ct0, trap_vector
   cspecialw mtcc, ct0
   cspecialr ct1, mtcc
 1:bne t0, t1, 1b
 
-1:auipcc csp, %pcrel_hi(stacks)
-  cincoffset csp, csp, %pcrel_lo(1b)
+  cllc csp, stacks
+
   csrr a3, mhartid
   slli a2, a3, RISCV_PGSHIFT
   cincoffset csp, csp, a2
@@ -435,8 +433,7 @@ do_reset:
   bnez a3, 2f
 
 #if __has_feature(capabilities)
-1:auipcc ct0, %pcrel_hi(init_cap_globals)
-  cincoffset ct0, ct0, %pcrel_lo(1b)
+  cllc ct0, init_cap_globals
   cjalr cra, ct0
 #endif
   j init_first_hart
