@@ -17,7 +17,7 @@ register long tp asm("tp");
 # define GET_F32_REG(insn, pos, regs) ({ \
   register int32_t value asm("a0") = SHIFT_RIGHT(insn, (pos)-3) & 0xf8; \
   uintptr_t tmp; \
-  asm ("1: auipcc %0, %%pcrel_hi(get_f32_reg); cincoffset %0, %0, %%pcrel_lo(1b); cincoffset %0, %0, %1; cjalr ct0, %0, %%pcrel_lo(1b)" : "=&C"(tmp), "+&r"(value) :: "ct0"); \
+  asm ("1: auipcc %0, %%pcrel_hi(get_f32_reg); cincoffset %0, %0, %%pcrel_lo(1b); cincoffset %0, %0, %1; cjalr ct0, %0" : "=&C"(tmp), "+&r"(value) :: "ct0"); \
   value; })
 # define SET_F32_REG(insn, pos, regs, val) ({ \
   register uint32_t value asm("a0") = (val); \
@@ -26,13 +26,12 @@ register long tp asm("tp");
   asm volatile ("1: auipcc %0, %%pcrel_hi(put_f32_reg); cincoffset %0, %0, %%pcrel_lo(1b); cincoffset %0, %0, %2; cjalr ct0, %0" : "=&C"(tmp) : "r"(value), "r"(offset) : "ct0"); })
 # define init_fp_reg(i) SET_F32_REG((i) << 3, 3, 0, 0)
 # define GET_F64_REG(insn, pos, regs) ({ \
-  register uintptr_t value asm("a0") = SHIFT_RIGHT(insn, (pos)-3) & 0xf8; \
+  register uint64_t value asm("a0") = SHIFT_RIGHT(insn, (pos)-3) & 0xf8; \
   uintptr_t tmp; \
   asm ("1: auipcc %0, %%pcrel_hi(get_f64_reg); cincoffset %0, %0, %%pcrel_lo(1b); cincoffset %0, %0, %1; cjalr ct0, %0" : "=&C"(tmp), "+&r"(value) :: "ct0"); \
-  sizeof(uintptr_t) == 4 ? *(int64_t*)value : (int64_t)value; })
+  value; })
 # define SET_F64_REG(insn, pos, regs, val) ({ \
-  uint64_t __val = (val); \
-  register uintptr_t value asm("a0") = sizeof(uintptr_t) == 4 ? (uintptr_t)&__val : (uintptr_t)__val; \
+  register uint64_t value asm("a0") = (val); \
   unsigned long offset = SHIFT_RIGHT(insn, (pos)-3) & 0xf8; \
   uintptr_t tmp; \
   asm volatile ("1: auipcc %0, %%pcrel_hi(put_f64_reg); cincoffset %0, %0, %%pcrel_lo(1b); cincoffset %0, %0, %2; cjalr ct0, %0" : "=&C"(tmp) : "r"(value), "r"(offset) : "ct0"); })
