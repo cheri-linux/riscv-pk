@@ -99,7 +99,11 @@ static void send_ipi_many(uintptr_t* pmask, int event)
   _Static_assert(MAX_HARTS <= 8 * sizeof(*pmask), "# harts > uintptr_t bits");
   uintptr_t mask = hart_mask;
   if (pmask)
+#if __has_feature(capabilities)
+    mask &= load_uintptr_t(pmask, read_scr(mepcc));
+#else
     mask &= load_uintptr_t(pmask, read_csr(mepc));
+#endif
 
   // send IPIs to everyone
   for (uintptr_t i = 0, m = mask; m; i++, m >>= 1)
@@ -126,7 +130,11 @@ static void send_ipi_many(uintptr_t* pmask, int event)
 
 void mcall_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
 {
+#if __has_feature(capabilities)
+  write_scr(mepcc, mepc + 4);
+#else
   write_csr(mepc, mepc + 4);
+#endif
 
   uintptr_t n = regs[17], arg0 = regs[10], arg1 = regs[11], retval, ipi_type;
 
@@ -173,7 +181,7 @@ send_ipi:
 
 void redirect_trap(uintptr_t epc, uintptr_t mstatus, uintptr_t badaddr)
 {
-  write_csr(stval, badaddr);
+  write_csr(stval, (__cheri_addr unsigned long)badaddr);
 #if __has_feature(capabilities)
   write_scr(sepcc, epc);
 #else
@@ -191,7 +199,7 @@ void redirect_trap(uintptr_t epc, uintptr_t mstatus, uintptr_t badaddr)
   new_mstatus |= (mstatus * (MSTATUS_SPIE / MSTATUS_SIE)) & MSTATUS_SPIE;
   new_mstatus |= (mstatus / (mpp_s / MSTATUS_SPP)) & MSTATUS_SPP;
   new_mstatus |= mpp_s;
-  write_csr(mstatus, new_mstatus);
+  write_csr(mstatus, (__cheri_addr unsigned long)new_mstatus);
 
   extern void __redirect_trap();
   return __redirect_trap();

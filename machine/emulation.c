@@ -140,7 +140,11 @@ void illegal_insn_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
       return emulate_rvc(regs, mcause, mepc, mstatus, insn);
   }
 
+#if __has_feature(capabilities)
+  write_scr(mepcc, mepc + 4);
+#else
   write_csr(mepc, mepc + 4);
+#endif
 
   extern uint32_t illegal_insn_trap_table[];
   int32_t* pf = (void*)illegal_insn_trap_table + (insn & 0x7c);
@@ -238,8 +242,14 @@ static inline int emulate_read_csr(int num, uintptr_t mstatus, uintptr_t* result
   return -1;
 }
 
+#if __has_feature(capabilities)
+static inline int emulate_write_csr(int num, uintptr_t _value, uintptr_t mstatus)
+{
+  unsigned long value = (__cheri_addr unsigned long)_value;
+#else
 static inline int emulate_write_csr(int num, uintptr_t value, uintptr_t mstatus)
 {
+#endif
   switch (num)
   {
     case CSR_CYCLE: write_csr(mcycle, value); return 0;
@@ -266,7 +276,7 @@ static inline int emulate_write_csr(int num, uintptr_t value, uintptr_t mstatus)
 DECLARE_EMULATION_FUNC(emulate_system_opcode)
 {
   int rs1_num = (insn >> 15) & 0x1f;
-  uintptr_t rs1_val = GET_RS1(insn, regs);
+  unsigned long rs1_val = (__cheri_addr unsigned long)GET_RS1(insn, regs);
   int csr_num = (uint32_t)insn >> 20;
   uintptr_t csr_val, new_csr_val;
 

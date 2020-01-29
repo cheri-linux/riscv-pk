@@ -12,7 +12,11 @@ void uart_putchar(uint8_t ch)
     int32_t r;
     do {
       __asm__ __volatile__ (
+#if __has_feature(capabilities)
+        "camoor.w %0, %2, %1\n"
+#else
         "amoor.w %0, %2, %1\n"
+#endif
         : "=r" (r), "+A" (uart[UART_REG_TXFIFO])
         : "r" (ch));
     } while (r < 0);
