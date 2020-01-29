@@ -71,7 +71,7 @@ void misaligned_load_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
   }
 
   val.int64 = 0;
-  for (intptr_t i = 0; i < len; i++)
+  for (unsigned i = 0; i < len; i++)
     val.bytes[i] = load_uint8_t((void *)(addr + i), mepc);
 
   if (!fp)
