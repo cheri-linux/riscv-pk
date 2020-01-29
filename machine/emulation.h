@@ -7,7 +7,7 @@
 #include "bits.h"
 #include <stdint.h>
 
-typedef uintptr_t insn_t;
+typedef unsigned long insn_t;
 typedef void (*emulation_func)(uintptr_t*, uintptr_t, uintptr_t, uintptr_t, insn_t);
 #define DECLARE_EMULATION_FUNC(name) void name(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc, uintptr_t mstatus, insn_t insn)
 
