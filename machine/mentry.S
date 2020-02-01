@@ -487,6 +487,15 @@ do_reset:
   csetbounds csp, csp, t0
   add t0, t0, -MENTRY_FRAME_SIZE
   csetoffset csp, csp, t0
+
+  # Zero out BSS
+  cllc ct0, _fbss
+  cllc ct1, _end
+  beq t0, t1, 2f
+1:csc c0, 0(ct0)
+  cincoffset ct0, ct0, REGBYTES
+  bne t0, t1, 1b
+2:
 #else
   csrw mscratch, x0
 
@@ -501,6 +510,15 @@ do_reset:
   csrr a3, mhartid
   slli a2, a3, RISCV_PGSHIFT
   add sp, sp, a2
+
+  # Zero out BSS
+  lla t0, _fbss
+  lla t1, _end
+  beq t0, t1, 2f
+1:STORE zero, 0(t0)
+  addi t0, t0, REGBYTES
+  bne t0, t1, 1b
+2:
 #endif
 
   # Boot on the first hart
