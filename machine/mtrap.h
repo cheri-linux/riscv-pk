@@ -54,7 +54,7 @@ typedef struct {
 
 // hart-local storage, at top of stack
 #define HLS() ((hls_t*)(MACHINE_STACK_TOP() - HLS_SIZE))
-#define OTHER_HLS(id) ((hls_t*)((char*)HLS() + RISCV_PGSIZE * ((id) - read_const_csr(mhartid))))
+#define OTHER_HLS(id) ((hls_t*)ptr_to_ddccap((char*)HLS() + RISCV_PGSIZE * ((id) - read_const_csr(mhartid))))
 
 hls_t* hls_init(uintptr_t hart_id);
 void parse_config_string();

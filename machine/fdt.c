@@ -340,7 +340,7 @@ static void clint_done(const struct fdt_scan_node *node, void *extra)
   assert (!scan->done); // only one clint
 
   scan->done = 1;
-  mtime = (void*)((uintptr_t)scan->reg + 0xbff8);
+  mtime = ptr_to_ddccap((void*)((uintptr_t)scan->reg + 0xbff8));
 
   for (int index = 0; end - value > 0; ++index) {
     uint32_t phandle = bswap(value[0]);
@@ -350,8 +350,8 @@ static void clint_done(const struct fdt_scan_node *node, void *extra)
         break;
     if (hart < MAX_HARTS) {
       hls_t *hls = OTHER_HLS(hart);
-      hls->ipi = (void*)((uintptr_t)scan->reg + index * 4);
-      hls->timecmp = (void*)((uintptr_t)scan->reg + 0x4000 + (index * 8));
+      hls->ipi = ptr_to_ddccap((void*)((uintptr_t)scan->reg + index * 4));
+      hls->timecmp = ptr_to_ddccap((void*)((uintptr_t)scan->reg + 0x4000 + (index * 8)));
     }
     value += 4;
   }

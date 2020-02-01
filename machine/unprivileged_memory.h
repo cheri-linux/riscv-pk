@@ -15,9 +15,6 @@
  * S-mode gets a misaligned fault using a capability assuming that the
  * CHERI exception takes precedence over an unaligned fault.
  */
-#define	ptr_to_ddccap(addr)                                         \
-   __builtin_cheri_address_set(                                     \
-     __builtin_cheri_global_data_get(), (__cheri_addr long)(addr))
 
 #define DECLARE_UNPRIVILEGED_LOAD_FUNCTION(type, insn)              \
   static inline type load_##type(const type* addr, uintptr_t mepc)  \
