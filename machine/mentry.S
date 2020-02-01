@@ -380,7 +380,9 @@ enter_supervisor_mode:
   csd x0, (csp) # Zero x0's save slot.
 #endif
 
-  # Set mepcc
+  # Rederive full-permissions mepcc
+  cspecialr ct0, ddc
+  csetoffset ca0, ct0, a0
   csetflags ca0, ca0, x0
   cspecialw mepcc, ca0
 
