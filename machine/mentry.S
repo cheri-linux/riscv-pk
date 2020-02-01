@@ -4,31 +4,37 @@
 #include "bits.h"
 #include "config.h"
 
+#if __has_feature(capabilities)
+#define PTR .chericap
+#else
+#define PTR .dc.a
+#endif
+
   .data
   .align 6
 trap_table:
 #define BAD_TRAP_VECTOR 0
-  .dc.a bad_trap
-  .dc.a pmp_trap
-  .dc.a illegal_insn_trap
-  .dc.a bad_trap
-  .dc.a misaligned_load_trap
-  .dc.a pmp_trap
-  .dc.a misaligned_store_trap
-  .dc.a pmp_trap
-  .dc.a bad_trap
-  .dc.a mcall_trap
-  .dc.a bad_trap
+  PTR bad_trap
+  PTR pmp_trap
+  PTR illegal_insn_trap
+  PTR bad_trap
+  PTR misaligned_load_trap
+  PTR pmp_trap
+  PTR misaligned_store_trap
+  PTR pmp_trap
+  PTR bad_trap
+  PTR mcall_trap
+  PTR bad_trap
 #ifdef BBL_BOOT_MACHINE
-  .dc.a mcall_trap
+  PTR mcall_trap
 #else
-  .dc.a bad_trap
+  PTR bad_trap
 #endif /* BBL_BOOT_MACHINE */
-  .dc.a bad_trap
+  PTR bad_trap
 #define TRAP_FROM_MACHINE_MODE_VECTOR 13
-  .dc.a __trap_from_machine_mode
-  .dc.a bad_trap
-  .dc.a bad_trap
+  PTR __trap_from_machine_mode
+  PTR bad_trap
+  PTR bad_trap
 
   .option norvc
   .section .text.init,"ax",@progbits
