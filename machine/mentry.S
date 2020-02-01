@@ -340,6 +340,7 @@ restore_regs:
   j .Lhandle_trap_in_machine_mode
 
   .globl __redirect_trap
+  .type __redirect_trap, @function
 __redirect_trap:
   # reset sp to top of M-mode stack
 #if __has_feature(capabilities)
@@ -360,6 +361,7 @@ __trap_from_machine_mode:
 
 #if __has_feature(capabilities)
   .globl enter_supervisor_mode
+  .type enter_supervisor_mode, @function
 enter_supervisor_mode:
   # Reset mstatus
   csrr t0, mstatus
@@ -386,6 +388,7 @@ enter_supervisor_mode:
   cmove ca0, ca1
   cmove ca1, ca2
   mret
+  .size enter_supervisor_mode, . - enter_supervisor_mode
 #endif
 
 #if __has_feature(capabilities)
