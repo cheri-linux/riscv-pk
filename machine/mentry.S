@@ -160,7 +160,8 @@ trap_vector:
   csc ca2,12*REGBYTES(csp)
   cspecialr ca2, mepcc             # ca2 <- mepcc
   csc ca3,13*REGBYTES(csp)
-  cspecialrw ct0, mscratchc, c0    # t0 <- user sp
+  cmove ct0, c0                    # c0 input for cspecialrw means cspecialr
+  cspecialrw ct0, mscratchc, ct0   # t0 <- user sp
   csc ca4,14*REGBYTES(csp)
   csc ca5,15*REGBYTES(csp)
   csc ca6,16*REGBYTES(csp)
