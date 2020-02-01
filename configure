@@ -4100,7 +4100,6 @@ LDFLAGS="$LDFLAGS -Wl,--build-id=none"
 
 
 
-LIBS="-lgcc"
 
 
 

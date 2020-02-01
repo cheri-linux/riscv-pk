@@ -116,7 +116,7 @@ COMPILE       := $(CC) -MMD -MP $(CFLAGS) \
 
 LD            := $(CC)
 LDFLAGS       := @LDFLAGS@ -nostartfiles -nostdlib -static $(LDFLAGS) $(march) $(mabi) -fno-stack-protector
-LIBS          := @LIBS@
+LIBS          := $(shell $(CC) $(CFLAGS) -print-libgcc-file-name)
 LINK          := $(LD) $(LDFLAGS)
 
 # Library creation
