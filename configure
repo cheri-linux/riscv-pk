@@ -4095,7 +4095,7 @@ $as_echo "#define PK_PRINT_DEVICE_TREE /**/" >>confdefs.h
 
 fi
 
-CFLAGS="-Wall -Werror -D__NO_INLINE__ -mcmodel=medany -O2 -std=gnu99 -Wno-unused -Wno-attributes -fno-delete-null-pointer-checks -fno-PIE"
+CFLAGS="-Wall -Werror -D__NO_INLINE__ -mcmodel=medany -g -O2 -std=gnu99 -Wno-unused -Wno-attributes -fno-delete-null-pointer-checks -fno-PIE"
 LDFLAGS="$LDFLAGS -Wl,--build-id=none"
 
 
