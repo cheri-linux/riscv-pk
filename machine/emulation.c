@@ -24,22 +24,22 @@ static DECLARE_EMULATION_FUNC(emulate_rvc)
 
   if ((insn & MASK_C_FLD) == MATCH_C_FLD) {
     uintptr_t addr = GET_RS1S(insn, regs) + RVC_LD_IMM(insn);
-    if (unlikely(addr % sizeof(uintptr_t)))
+    if (unlikely(addr % 8))
       return misaligned_load_trap(regs, mcause, mepc);
     SET_F64_RD(RVC_RS2S(insn) << SH_RD, regs, load_uint64_t((void *)addr, mepc));
   } else if ((insn & MASK_C_FLDSP) == MATCH_C_FLDSP) {
     uintptr_t addr = GET_SP(regs) + RVC_LDSP_IMM(insn);
-    if (unlikely(addr % sizeof(uintptr_t)))
+    if (unlikely(addr % 8))
       return misaligned_load_trap(regs, mcause, mepc);
     SET_F64_RD(insn, regs, load_uint64_t((void *)addr, mepc));
   } else if ((insn & MASK_C_FSD) == MATCH_C_FSD) {
     uintptr_t addr = GET_RS1S(insn, regs) + RVC_LD_IMM(insn);
-    if (unlikely(addr % sizeof(uintptr_t)))
+    if (unlikely(addr % 8))
       return misaligned_store_trap(regs, mcause, mepc);
     store_uint64_t((void *)addr, GET_F64_RS2(RVC_RS2S(insn) << SH_RS2, regs), mepc);
   } else if ((insn & MASK_C_FSDSP) == MATCH_C_FSDSP) {
     uintptr_t addr = GET_SP(regs) + RVC_SDSP_IMM(insn);
-    if (unlikely(addr % sizeof(uintptr_t)))
+    if (unlikely(addr % 8))
       return misaligned_store_trap(regs, mcause, mepc);
     store_uint64_t((void *)addr, GET_F64_RS2(RVC_RS2(insn) << SH_RS2, regs), mepc);
   } else

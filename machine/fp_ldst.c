@@ -23,7 +23,7 @@ DECLARE_EMULATION_FUNC(emulate_float_load)
       break;
 
     case MATCH_FLD & MASK_FUNCT3:
-      punt_to_misaligned_handler(sizeof(uintptr_t), misaligned_load_trap);
+      punt_to_misaligned_handler(8, misaligned_load_trap);
       SET_F64_RD(insn, regs, load_uint64_t((void *)addr, mepc));
       break;
 
@@ -48,7 +48,7 @@ DECLARE_EMULATION_FUNC(emulate_float_store)
       break;
 
     case MATCH_FSD & MASK_FUNCT3:
-      punt_to_misaligned_handler(sizeof(uintptr_t), misaligned_store_trap);
+      punt_to_misaligned_handler(8, misaligned_store_trap);
       store_uint64_t((void *)addr, GET_F64_RS2(insn, regs), mepc);
       break;
 

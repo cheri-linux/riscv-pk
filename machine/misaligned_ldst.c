@@ -23,10 +23,10 @@ void misaligned_load_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
 
   int shift = 0, fp = 0, len;
   if ((insn & MASK_LW) == MATCH_LW)
-    len = 4, shift = 8*(sizeof(uintptr_t) - len);
+    len = 4, shift = 8*(sizeof(size_t) - len);
 #if __riscv_xlen == 64
   else if ((insn & MASK_LD) == MATCH_LD)
-    len = 8, shift = 8*(sizeof(uintptr_t) - len);
+    len = 8, shift = 8*(sizeof(size_t) - len);
   else if ((insn & MASK_LWU) == MATCH_LWU)
     len = 4;
 #endif
@@ -37,20 +37,20 @@ void misaligned_load_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
     fp = 1, len = 4;
 #endif
   else if ((insn & MASK_LH) == MATCH_LH)
-    len = 2, shift = 8*(sizeof(uintptr_t) - len);
+    len = 2, shift = 8*(sizeof(size_t) - len);
   else if ((insn & MASK_LHU) == MATCH_LHU)
     len = 2;
 #ifdef __riscv_compressed
 # if __riscv_xlen >= 64
   else if ((insn & MASK_C_LD) == MATCH_C_LD)
-    len = 8, shift = 8*(sizeof(uintptr_t) - len), insn = RVC_RS2S(insn) << SH_RD;
+    len = 8, shift = 8*(sizeof(size_t) - len), insn = RVC_RS2S(insn) << SH_RD;
   else if ((insn & MASK_C_LDSP) == MATCH_C_LDSP && ((insn >> SH_RD) & 0x1f))
-    len = 8, shift = 8*(sizeof(uintptr_t) - len);
+    len = 8, shift = 8*(sizeof(size_t) - len);
 # endif
   else if ((insn & MASK_C_LW) == MATCH_C_LW)
-    len = 4, shift = 8*(sizeof(uintptr_t) - len), insn = RVC_RS2S(insn) << SH_RD;
+    len = 4, shift = 8*(sizeof(size_t) - len), insn = RVC_RS2S(insn) << SH_RD;
   else if ((insn & MASK_C_LWSP) == MATCH_C_LWSP && ((insn >> SH_RD) & 0x1f))
-    len = 4, shift = 8*(sizeof(uintptr_t) - len);
+    len = 4, shift = 8*(sizeof(size_t) - len);
 # ifdef PK_ENABLE_FP_EMULATION
   else if ((insn & MASK_C_FLD) == MATCH_C_FLD)
     fp = 1, len = 8, insn = RVC_RS2S(insn) << SH_RD;
