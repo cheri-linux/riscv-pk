@@ -477,8 +477,17 @@ do_reset:
   bnez a3, 2f
 
 #if __has_feature(capabilities)
+  # Save a0/a1 with hartid/DTB from previous boot loader stage
+  mv s0, a0
+  mv s1, a1
+
+  # Initialise captable
   cllc ct0, init_cap_globals
   cjalr cra, ct0
+
+  # Restore hartid/DTB for init_first_hart
+  mv a0, s0
+  mv a1, s1
 #endif
   j init_first_hart
 
