@@ -96,11 +96,12 @@ static inline void wfi()
 #else
 # define SOFT_FLOAT_CONTEXT_SIZE (8 * 32)
 #endif
-#define HLS_SIZE 64
 #if __has_feature(capabilities)
 #define INTEGER_CONTEXT_SIZE (33 * REGBYTES)
+#define HLS_SIZE 128
 #else
 #define INTEGER_CONTEXT_SIZE (32 * REGBYTES)
+#define HLS_SIZE 64
 #endif
 
 #endif
