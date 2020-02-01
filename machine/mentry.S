@@ -36,6 +36,23 @@ trap_table:
   PTR bad_trap
   PTR bad_trap
 
+  PTR bad_trap
+  PTR bad_trap
+  PTR bad_trap
+  PTR bad_trap
+  PTR bad_trap
+  PTR bad_trap
+  PTR bad_trap
+  PTR bad_trap
+  PTR bad_trap
+  PTR bad_trap
+  PTR bad_trap
+  PTR bad_trap
+  PTR bad_trap /* 0x1c CHERI excception */
+  PTR bad_trap
+  PTR bad_trap
+  PTR bad_trap
+
   .option norvc
   .section .text.init,"ax",@progbits
   .globl reset_vector
