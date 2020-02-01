@@ -28,7 +28,7 @@
          #insn " %1, %2\n"                                          \
          "csrw mstatus, %0"                                         \
          : "+&r" (__mstatus), "=&r" (val)                           \
-         : "A" (addr), "r" (__mstatus_adjust), "C" (__mepc));       \
+         : "m" (*addr), "r" (__mstatus_adjust), "C" (__mepc));      \
     return val;                                                     \
   }
 
@@ -43,7 +43,7 @@
                   #insn " %1, %2\n"                                     \
                   "csrw mstatus, %0"                                    \
                   : "+&r" (__mstatus)                                   \
-                  : "r" (val), "A" (addr), "r" (__mstatus_adjust),      \
+                  : "r" (val), "m" (*addr), "r" (__mstatus_adjust),     \
                     "C" (__mepc));                                      \
   }
 
