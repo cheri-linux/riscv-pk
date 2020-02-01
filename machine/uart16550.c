@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include <assert.h>
 #include "uart16550.h"
+#include "encoding.h"
 #include "fdt.h"
 
 volatile uint8_t* uart16550;
@@ -96,7 +97,7 @@ static void uart16550_done(const struct fdt_scan_node *node, void *extra)
   if (divisor >= 0x10000u)
     divisor = uart16550_clock / (16 * UART_DEFAULT_BAUD);
 
-  uart16550 = (void*)((uintptr_t)scan->reg + scan->reg_offset);
+  uart16550 = ptr_to_ddccap((void*)((uintptr_t)scan->reg + scan->reg_offset));
   uart16550_reg_shift = scan->reg_shift;
   // http://wiki.osdev.org/Serial_Ports
   uart16550[UART_REG_IER << uart16550_reg_shift] = 0x00;                // Disable all interrupts
