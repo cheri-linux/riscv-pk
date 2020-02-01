@@ -153,7 +153,7 @@ void illegal_insn_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
 
   extern uint32_t illegal_insn_trap_table[];
   int32_t* pf = (void*)illegal_insn_trap_table + (insn & 0x7c);
-  emulation_func f = (emulation_func)((void*)illegal_insn_trap_table + *pf);
+  emulation_func f = (emulation_func)ptr_to_pcccap((void*)illegal_insn_trap_table + *pf);
   f(regs, mcause, mepc, mstatus, insn);
 }
 

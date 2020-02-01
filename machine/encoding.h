@@ -223,12 +223,16 @@
 #define write_scr(reg, val) ({ \
   asm volatile ("cspecialw " #reg ", %0" :: "CK"(val)); })
 
+#define	ptr_to_pcccap(addr)                                         \
+   __builtin_cheri_address_set(                                     \
+     __builtin_cheri_program_counter_get(), (__cheri_addr long)(addr))
 #define	ptr_to_ddccap(addr)                                         \
    __builtin_cheri_address_set(                                     \
      __builtin_cheri_global_data_get(), (__cheri_addr long)(addr))
 
 #else
 
+#define	ptr_to_pcccap(addr) (addr)
 #define	ptr_to_ddccap(addr) (addr)
 
 #endif
