@@ -33,8 +33,14 @@ trap_table:
   .option norvc
   .section .text.init,"ax",@progbits
   .globl reset_vector
+#if __has_feature(capabilities)
+  .option nocapmode
+#endif
 reset_vector:
   j do_reset
+#if __has_feature(capabilities)
+  .option capmode
+#endif
 
 trap_vector:
 #if __has_feature(capabilities)
@@ -382,6 +388,9 @@ enter_supervisor_mode:
   mret
 #endif
 
+#if __has_feature(capabilities)
+  .option nocapmode
+#endif
 do_reset:
   li x1, 0
   li x2, 0
@@ -422,11 +431,16 @@ do_reset:
   cspecialw mtdc, ct0
 
   # switch into cap-mode
-  cllc ct0, 1f
+  lla t0, 1f
+  cspecialr ct1, pcc
+  csetoffset ct0, ct1, t0
   li t1, 1
   csetflags ct0, ct0, t1
   cjr ct0
 1:
+#if __has_feature(capabilities)
+  .option capmode
+#endif
 
   # write mtcc and make sure it sticks
   cllc ct0, trap_vector
