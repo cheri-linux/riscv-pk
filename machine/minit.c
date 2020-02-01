@@ -88,7 +88,7 @@ static void fp_init()
     init_fp_reg(i);
   write_csr(fcsr, 0);
 #else
-  uintptr_t fd_mask = (1 << ('F' - 'A')) | (1 << ('D' - 'A'));
+  size_t fd_mask = (1 << ('F' - 'A')) | (1 << ('D' - 'A'));
   clear_csr(misa, fd_mask);
   assert(!(read_csr(misa) & fd_mask));
 #endif

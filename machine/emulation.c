@@ -12,7 +12,11 @@ static DECLARE_EMULATION_FUNC(emulate_rvc)
 #ifdef __riscv_compressed
   // the only emulable RVC instructions are FP loads and stores.
 # if !defined(__riscv_flen) && defined(PK_ENABLE_FP_EMULATION)
+#if __has_feature(capabilities)
+  write_scr(mepcc, mepc + 2);
+#else
   write_csr(mepc, mepc + 2);
+#endif
 
   // if FPU is disabled, punt back to the OS
   if (unlikely((mstatus & MSTATUS_FS) == 0))
