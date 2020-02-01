@@ -485,9 +485,10 @@ do_reset:
   cllc ct0, init_cap_globals
   cjalr cra, ct0
 
-  # Restore hartid/DTB for init_first_hart
+  # Restore hartid/DTB for init_first_hart, and turn DTB into a capability
   mv a0, s0
-  mv a1, s1
+  cspecialr ct0, ddc
+  csetoffset ca1, ct0, s1
 #endif
   j init_first_hart
 
