@@ -468,9 +468,7 @@ do_reset:
   csetflags ct0, ct0, t1
   cjr ct0
 1:
-#if __has_feature(capabilities)
   .option capmode
-#endif
 
   # write mtcc and make sure it sticks
   cllc ct0, trap_vector
