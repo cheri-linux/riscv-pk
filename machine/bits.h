@@ -26,8 +26,8 @@
 #if __has_feature(capabilities)
 // XXX: Assumes c128 rather than c64
 # define SLL32    sllw
-# define STORE    sd.ddc
-# define LOAD     ld.ddc
+# define STORE    csd
+# define LOAD     cld
 # define LWU      clwu
 # define LOG_REGBYTES 4
 #elif __riscv_xlen == 64
