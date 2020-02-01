@@ -69,6 +69,9 @@ static void delegate_traps()
     (1U << CAUSE_LOAD_PAGE_FAULT) |
     (1U << CAUSE_STORE_PAGE_FAULT) |
     (1U << CAUSE_USER_ECALL);
+#if __has_feature(capabilities)
+  exceptions |= 1U << 0x1c; /* CHERI exception */
+#endif
 
   write_csr(mideleg, interrupts);
   write_csr(medeleg, exceptions);
