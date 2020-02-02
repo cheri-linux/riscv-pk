@@ -82,6 +82,7 @@ AC_ARG_VAR(RISCV, [top-level RISC-V install directory])
 
 AC_ARG_WITH([arch], AS_HELP_STRING([--with-arch], [Set the RISC-V architecture]),
   [AC_SUBST([WITH_ARCH], $with_arch, [Specify architecture to build the project])])
+
 AC_ARG_WITH([abi], AS_HELP_STRING([--with-abi], [Set the RISC-V ABI]),
   [AC_SUBST([WITH_ABI], $with_abi, [Specify ABI to build the project])])
 
@@ -96,7 +97,6 @@ LDFLAGS="$LDFLAGS -Wl,--build-id=none"
 AC_SUBST(CFLAGS)
 AC_SUBST(LDFLAGS)
 AC_SUBST(WITH_ARCH)
-AC_SUBST(WITH_ABI)
 AC_SUBST(host_alias)
 
 AC_ARG_WITH([mem-start], AS_HELP_STRING([--with-mem-start], [Set physical memory start address]),

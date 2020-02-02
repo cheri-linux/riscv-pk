@@ -37,9 +37,17 @@ void* kernel_end;
 
 static void mstatus_init()
 {
+  uintptr_t mstatus = 0;
+
   // Enable FPU
-  if (supports_extension('D') || supports_extension('F'))
-    write_csr(mstatus, MSTATUS_FS);
+  if (supports_extension('F'))
+    mstatus |= MSTATUS_FS;
+
+  // Enable vector extension
+  if (supports_extension('V'))
+    mstatus |= MSTATUS_VS;
+
+  write_csr(mstatus, mstatus);
 
   // Enable user/supervisor use of perf counters
   if (supports_extension('S'))
@@ -81,7 +89,7 @@ static void delegate_traps()
 
 static void fp_init()
 {
-  if (!supports_extension('D') && !supports_extension('F'))
+  if (!supports_extension('F'))
     return;
 
   assert(read_csr(mstatus) & MSTATUS_FS);
@@ -90,6 +98,13 @@ static void fp_init()
   for (int i = 0; i < 32; i++)
     init_fp_reg(i);
   write_csr(fcsr, 0);
+
+# if __riscv_flen == 32
+  size_t d_mask = 1 << ('D' - 'A');
+  clear_csr(misa, d_mask);
+  assert(!(read_csr(misa) & d_mask));
+# endif
+
 #else
   size_t fd_mask = (1 << ('F' - 'A')) | (1 << ('D' - 'A'));
   clear_csr(misa, fd_mask);

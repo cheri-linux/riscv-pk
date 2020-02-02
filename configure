@@ -594,8 +594,8 @@ BBL_LOGO_FILE
 BBL_PAYLOAD
 BBL_ENABLE_LOGO
 MEM_START
-WITH_ARCH
 WITH_ABI
+WITH_ARCH
 RISCV
 EGREP
 GREP
@@ -4075,6 +4075,8 @@ if test "${with_arch+set}" = set; then :
 
 fi
 
+
+
 # Check whether --with-abi was given.
 if test "${with_abi+set}" = set; then :
   withval=$with_abi; WITH_ABI=$with_abi
@@ -4097,7 +4099,6 @@ fi
 
 CFLAGS="-Wall -Werror -D__NO_INLINE__ -mcmodel=medany -g -O2 -std=gnu99 -Wno-unused -Wno-attributes -fno-delete-null-pointer-checks -fno-PIE"
 LDFLAGS="$LDFLAGS -Wl,--build-id=none"
-
 
 
 
