@@ -37,7 +37,7 @@ void* kernel_end;
 
 static void mstatus_init()
 {
-  uintptr_t mstatus = 0;
+  unsigned long mstatus = 0;
 
   // Enable FPU
   if (supports_extension('F'))
