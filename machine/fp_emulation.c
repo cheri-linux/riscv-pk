@@ -56,7 +56,7 @@ DECLARE_EMULATION_FUNC(emulate_fp)
 
   extern uint32_t fp_emulation_table[];
   int32_t* pf = (void*)fp_emulation_table + ((insn >> 25) & 0x7c);
-  emulation_func f = (emulation_func)((void*)fp_emulation_table + *pf);
+  emulation_func f = (emulation_func)ptr_to_pcccap((void*)fp_emulation_table + *pf);
 
   SETUP_STATIC_ROUNDING(insn);
   return f(regs, mcause, mepc, mstatus, insn);
