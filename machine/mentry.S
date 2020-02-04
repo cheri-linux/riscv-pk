@@ -455,7 +455,9 @@ do_reset:
   li x30, 0
   li x31, 0
 #if __has_feature(capabilities)
-  cspecialw mscratchc, c0
+  # c0 input for cspecialrw means cspecialr
+  cmove ct0, c0
+  cspecialw mscratchc, ct0
 
   cspecialr ct0, ddc
   cspecialw mtdc, ct0
