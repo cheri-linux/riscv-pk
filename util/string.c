@@ -17,8 +17,7 @@ void* memcpy(void* dest, const void* src, size_t len)
 #if __has_feature(capabilities)
   if (((__cheri_addr long)dest ^ (__cheri_addr long)src) %
       sizeof(uintptr_t) == 0) {
-    int tocopy = sizeof(uintptr_t) -
-      ((__cheri_addr long)dest % sizeof(uintptr_t));
+    int tocopy = (-(__cheri_addr size_t)dest) % sizeof(uintptr_t);
     if (tocopy > len)
       tocopy = len;
     len -= tocopy;
