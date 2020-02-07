@@ -45,10 +45,7 @@ static void filter_dtb(uintptr_t source)
 {
   uintptr_t dest = dtb_output();
   uint32_t size = fdt_size(source);
-  //memcpy((void*)dest, (void*)source, size);
-  // XXX: Hack to work around IO capability reads clearing high word
-  for (int i = 0; i < size; ++i)
-    ((char *)dest)[i] = ((char *)source)[i];
+  memcpy((void*)dest, (void*)source, size);
 
   // Remove information from the chained FDT
   filter_harts(dest, &disabled_hart_mask);
