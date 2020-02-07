@@ -15,7 +15,13 @@ extern char _payload_start, _payload_end; /* internal payload */
 # define PAYLOAD_END ROUNDUP((uintptr_t)&_payload_end, MEGAPAGE_SIZE)
 #else
 # define PAYLOAD_START (void*)(MEM_START + MEGAPAGE_SIZE)
-# define PAYLOAD_END (void*)(MEM_START + 0x2200000)
+/*
+ * OpenSBI uses 0x2200000, which only gives 32 MiB for the payload, and is
+ * easily exceeded by a CheriBSD kernel with an mfsroot. Instead, since we have
+ * lots of available memory, use an offset of 0x10000000, giving 254 MiB of
+ * space, which should be plenty.
+ */
+# define PAYLOAD_END (void*)(MEM_START + 0x10000000)
 #endif
 static const void* entry_point;
 long disabled_hart_mask;
