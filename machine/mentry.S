@@ -378,11 +378,13 @@ __redirect_trap:
   addi sp, sp, -MENTRY_FRAME_SIZE
 #endif
   j restore_mscratch
+.size __redirect_trap, . - __redirect_trap
 
   .type __trap_from_machine_mode, @function
 __trap_from_machine_mode:
   jal trap_from_machine_mode
   j restore_regs
+.size __trap_from_machine_mode, . - __trap_from_machine_mode
 
 #if __has_feature(capabilities)
   .globl enter_supervisor_mode

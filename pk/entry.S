@@ -62,6 +62,7 @@
   .text
   .align 2
   .global  trap_entry
+  .type trap_entry, @function
 trap_entry:
   cspecialrw csp, sscratchc, csp
   bnez sp, 1f
@@ -78,6 +79,7 @@ trap_entry:
   cincoffset csp,csp,656
   cspecialw sscratch,csp
 
+  .type start_user, @function
   .globl start_user
 start_user:
   LOAD t0, 32*REGBYTES(ca0)
@@ -235,3 +237,4 @@ start_user:
 
   # gtfo
   sret
+.size trap_entry, . - trap_entry

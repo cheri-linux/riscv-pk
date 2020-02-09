@@ -76,6 +76,7 @@ void illegal_insn_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
 {
   asm (".pushsection .rodata\n"
        ".align 2\n"
+       ".type illegal_insn_trap_table, @object\n"
        "illegal_insn_trap_table:\n"
        "  .word truly_illegal_insn - illegal_insn_trap_table\n"
 #if !defined(__riscv_flen) && defined(PK_ENABLE_FP_EMULATION)
@@ -133,6 +134,7 @@ void illegal_insn_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
        "  .word truly_illegal_insn - illegal_insn_trap_table\n"
        "  .word truly_illegal_insn - illegal_insn_trap_table\n"
        "  .word truly_illegal_insn - illegal_insn_trap_table\n"
+       "  .size illegal_insn_trap_table,  . - illegal_insn_trap_table\n"
        "  .popsection");
 
   uintptr_t mstatus = read_csr(mstatus);

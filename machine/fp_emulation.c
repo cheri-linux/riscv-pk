@@ -15,6 +15,7 @@
 DECLARE_EMULATION_FUNC(emulate_fp)
 {
   asm (".pushsection .rodata\n"
+       ".type fp_emulation_table, @object\n"
        "fp_emulation_table:\n"
        "  .word emulate_fadd - fp_emulation_table\n"
        "  .word emulate_fsub - fp_emulation_table\n"
@@ -48,6 +49,7 @@ DECLARE_EMULATION_FUNC(emulate_fp)
        "  .word truly_illegal_insn - fp_emulation_table\n"
        "  .word emulate_fmv_fi - fp_emulation_table\n"
        "  .word truly_illegal_insn - fp_emulation_table\n"
+       "  .size fp_emulation_table,  . - fp_emulation_table\n"
        "  .popsection");
 
   // if FPU is disabled, punt back to the OS
