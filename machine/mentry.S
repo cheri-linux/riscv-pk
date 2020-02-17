@@ -104,8 +104,8 @@ trap_vector:
   clc ca1, 11*REGBYTES(csp)
   cspecialrw csp, mscratchc, csp
 #else
-  LOAD a0, 10*REGBYTES(csp)
-  LOAD a1, 11*REGBYTES(csp)
+  LOAD a0, 10*REGBYTES(sp)
+  LOAD a1, 11*REGBYTES(sp)
   csrrw sp, mscratch, sp
 #endif
   mret
