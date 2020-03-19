@@ -10,6 +10,7 @@ int vsnprintf(char* out, size_t n, const char* s, va_list vl)
   bool format = false;
   bool longarg = false;
   bool longlongarg = false;
+  bool uintptrarg = false;
   size_t pos = 0;
   for( ; *s; s++)
   {
@@ -26,16 +27,17 @@ int vsnprintf(char* out, size_t n, const char* s, va_list vl)
               longarg = true;
           break;
         case 'p':
-          longarg = true;
+          uintptrarg = true;
           if (++pos < n) out[pos-1] = '0';
           if (++pos < n) out[pos-1] = 'x';
         case 'x':
         {
-          long num = longarg ? va_arg(vl, long) : va_arg(vl, int);
-          for(int i = 2*(longarg ? sizeof(long) : sizeof(int))-1; i >= 0; i--) {
+          long num = uintptrarg ? va_arg(vl, uintptr_t) : (longarg ? va_arg(vl, long) : va_arg(vl, int));
+          for(int i = 2*((uintptrarg || longarg) ? sizeof(long) : sizeof(int))-1; i >= 0; i--) {
             int d = (num >> (4*i)) & 0xF;
             if (++pos < n) out[pos-1] = (d < 10 ? '0'+d : 'a'+d-10);
           }
+          uintptrarg = false;
           longarg = false;
           format = false;
           break;
