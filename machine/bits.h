@@ -30,18 +30,21 @@
 # define LOAD     cld
 # define LWU      clwu
 # define LOG_REGBYTES 4
-#elif __riscv_xlen == 64
-# define SLL32    sllw
-# define STORE    sd
-# define LOAD     ld
-# define LWU      lwu
-# define LOG_REGBYTES 3
 #else
-# define SLL32    sll
-# define STORE    sw
-# define LOAD     lw
-# define LWU      lw
-# define LOG_REGBYTES 2
+# define __cheri_addr
+# if __riscv_xlen == 64
+#  define SLL32    sllw
+#  define STORE    sd
+#  define LOAD     ld
+#  define LWU      lwu
+#  define LOG_REGBYTES 3
+# else
+#  define SLL32    sll
+#  define STORE    sw
+#  define LOAD     lw
+#  define LWU      lw
+#  define LOG_REGBYTES 2
+# endif
 #endif
 #define REGBYTES (1 << LOG_REGBYTES)
 
