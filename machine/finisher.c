@@ -42,7 +42,7 @@ static void finisher_done(const struct fdt_scan_node *node, void *extra)
 {
   struct finisher_scan *scan = (struct finisher_scan *)extra;
   if (!scan->compat || !scan->reg || finisher) return;
-  finisher = (uint32_t*)(uintptr_t)scan->reg;
+  finisher = ptr_to_ddccap((uint32_t*)(uintptr_t)scan->reg);
 }
 
 void query_finisher(uintptr_t fdt)
