@@ -11,6 +11,7 @@ int vsnprintf(char* out, size_t n, const char* s, va_list vl)
   bool longarg = false;
   bool longlongarg = false;
   bool uintptrarg = false;
+  const char* fmtstart;
   size_t pos = 0;
   for( ; *s; s++)
   {
@@ -40,6 +41,7 @@ int vsnprintf(char* out, size_t n, const char* s, va_list vl)
           uintptrarg = false;
           longarg = false;
           format = false;
+          uintptrarg = false;
           break;
         }
         case 'd':
@@ -88,13 +90,25 @@ int vsnprintf(char* out, size_t n, const char* s, va_list vl)
           break;
         }
         default:
-          break;
+          for (const char* badfmt = fmtstart; badfmt <= s; badfmt++) {
+            if (++pos < n)
+              out[pos - 1] = *badfmt;
+          }
+          format = false;
+          longarg = false;
+          longlongarg = false;
+          uintptrarg = false;
+          fmtstart = NULL;
+          continue;
       }
     }
-    else if(*s == '%')
+    else if(*s == '%') {
       format = true;
-    else
-      if (++pos < n) out[pos-1] = *s;
+      fmtstart = s;
+    } else {
+      if (++pos < n)
+        out[pos - 1] = *s;
+    }
   }
   if (pos < n)
     out[pos] = 0;
