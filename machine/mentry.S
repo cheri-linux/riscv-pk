@@ -494,11 +494,10 @@ do_reset:
 1:bne t0, t1, 1b
 
   cllc csp, stacks
-
   csrr a3, mhartid
-  slli a2, a3, RISCV_PGSHIFT
+  slli a2, a3, MACHINE_STACK_PGSHIFT
   cincoffset csp, csp, a2
-  li t0, RISCV_PGSIZE
+  li t0, MACHINE_STACK_SIZE
   csetbounds csp, csp, t0
   add t0, t0, -MENTRY_FRAME_SIZE
   csetoffset csp, csp, t0
@@ -511,10 +510,10 @@ do_reset:
   csrr t1, mtvec
 1:bne t0, t1, 1b
 
-  la sp, stacks + RISCV_PGSIZE - MENTRY_FRAME_SIZE
+  la sp, stacks + MACHINE_STACK_SIZE - MENTRY_FRAME_SIZE
 
   csrr a3, mhartid
-  slli a2, a3, RISCV_PGSHIFT
+  slli a2, a3, MACHINE_STACK_PGSHIFT
   add sp, sp, a2
 #endif
 
@@ -599,4 +598,4 @@ do_reset:
   .bss
   .align RISCV_PGSHIFT
 stacks:
-  .skip RISCV_PGSIZE * MAX_HARTS
+  .skip MACHINE_STACK_SIZE * MAX_HARTS
