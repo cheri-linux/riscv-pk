@@ -199,7 +199,7 @@ trap_vector:
   csc ct6,31*REGBYTES(csp)
   csc ct0, 2*REGBYTES(csp)         # sp
   cspecialr ct0, ddc
-  csc ct0,33*REGBYTES(csp)
+  csc ct0,32*REGBYTES(csp)
   cspecialr ct0, mtdc
   cspecialw ddc, ct0
 
@@ -276,7 +276,7 @@ restore_mscratch:
 restore_regs:
   # Restore all of the registers.
 #if __has_feature(capabilities)
-  clc ct0,33*REGBYTES(csp)
+  clc ct0,32*REGBYTES(csp)
   cspecialw ddc, ct0
   clc cra, 1*REGBYTES(csp)
   clc cgp, 3*REGBYTES(csp)
