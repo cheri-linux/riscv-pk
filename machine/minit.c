@@ -10,8 +10,7 @@
 #include "finisher.h"
 #include "disabled_hart_mask.h"
 #include "htif.h"
-#include <string.h>
-#include <limits.h>
+#include "string.h"
 #if __has_feature(capabilities)
 #include <cheri_init_globals.h>
 #endif
@@ -168,7 +167,7 @@ static void hart_plic_init()
   for (size_t i = 0; i < ie_words; i++) {
      if (HLS()->plic_s_ie) {
         // Supervisor not always present
-        HLS()->plic_s_ie[i] = ULONG_MAX;
+        HLS()->plic_s_ie[i] = __SIZE_MAX__;
      }
   }
   *HLS()->plic_m_thresh = 1;

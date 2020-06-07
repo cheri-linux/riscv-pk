@@ -5,7 +5,7 @@
 #include "mtrap.h"
 #include "fdt.h"
 #include "syscall.h"
-#include <string.h>
+#include "string.h"
 
 extern uint64_t __htif_base;
 volatile uint64_t tohost __attribute__((section(".htif")));

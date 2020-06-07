@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <string.h>
+#include "string.h"
 #include "config.h"
 #include "fdt.h"
 #include "mtrap.h"

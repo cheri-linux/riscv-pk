@@ -1,6 +1,6 @@
 // See LICENSE for license details.
 
-#include <string.h>
+#include "string.h"
 #include "uart.h"
 #include "encoding.h"
 #include "fdt.h"

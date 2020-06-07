@@ -12,9 +12,7 @@
 #include "fdt.h"
 #include "unprivileged_memory.h"
 #include "disabled_hart_mask.h"
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
+#include "string.h"
 
 void __attribute__((noreturn)) bad_trap(uintptr_t* regs, uintptr_t dummy, uintptr_t mepc)
 {
@@ -173,7 +171,7 @@ send_ipi:
 #endif
       break;
     default:
-      retval = -ENOSYS;
+      retval = SBI_ERR_NOT_SUPPORTED;
       break;
   }
   regs[10] = retval;

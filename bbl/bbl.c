@@ -7,7 +7,7 @@
 #include "bits.h"
 #include "config.h"
 #include "fdt.h"
-#include <string.h>
+#include "string.h"
 
 #ifdef BBL_PAYLOAD
 extern char _payload_start, _payload_end; /* internal payload */

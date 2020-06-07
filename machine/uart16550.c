@@ -1,8 +1,5 @@
 // See LICENSE for license details.
-
-#include <string.h>
-#include <stdarg.h>
-#include <assert.h>
+#include "string.h"
 #include "uart16550.h"
 #include "encoding.h"
 #include "fdt.h"
