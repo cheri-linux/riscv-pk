@@ -77,6 +77,8 @@ static void delegate_traps()
     (1U << CAUSE_STORE_PAGE_FAULT) |
     (1U << CAUSE_USER_ECALL);
 #if __has_feature(capabilities)
+  exceptions |= 1U << 0x1a; /* LOAD_CAP_PAGE_FAULT */
+  exceptions |= 1U << 0x1b; /* STORE_CAP_PAGE_FAULT */
   exceptions |= 1U << 0x1c; /* CHERI exception */
 #endif
 
