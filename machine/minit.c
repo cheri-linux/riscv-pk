@@ -164,12 +164,12 @@ static void hart_plic_init()
   if (!plic_ndevs)
     return;
 
-  size_t ie_words = (plic_ndevs + 8 * sizeof(size_t) - 1) /
-		(8 * sizeof(size_t));
+  size_t ie_words = (plic_ndevs + 8 * sizeof(*HLS()->plic_s_ie) - 1) /
+		(8 * sizeof(*HLS()->plic_s_ie));
   for (size_t i = 0; i < ie_words; i++) {
      if (HLS()->plic_s_ie) {
         // Supervisor not always present
-        HLS()->plic_s_ie[i] = __SIZE_MAX__;
+        HLS()->plic_s_ie[i] = __UINT32_MAX__;
      }
   }
   *HLS()->plic_m_thresh = 1;
