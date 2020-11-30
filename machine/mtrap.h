@@ -60,7 +60,11 @@ hls_t* hls_init(uintptr_t hart_id);
 void parse_config_string();
 void poweroff(uint16_t code) __attribute((noreturn));
 void printm(const char* s, ...) __attribute__((format(printf, 1, 2)));
-void vprintm(const char *s, va_list args) __attribute__((format(vprintf, 1, 2)));
+void vprintm(const char *s, va_list args)
+#if defined(__clang__)
+	__attribute__((format(vprintf, 1, 2)))
+#endif
+	;
 void putstring(const char* s);
 #define assert(x) ({ if (!(x)) die("assertion failed: %s", #x); })
 #define die(str, ...) ({ printm("%s:%d: " str "\r\n", __FILE__, __LINE__, ##__VA_ARGS__); poweroff(-1); })

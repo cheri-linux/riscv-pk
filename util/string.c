@@ -1,5 +1,6 @@
 // See LICENSE for license details.
 
+#include "bits.h"
 #include "string.h"
 #include <stdint.h>
 

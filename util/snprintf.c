@@ -11,7 +11,7 @@ int vsnprintf(char* out, size_t n, const char* s, va_list vl)
   bool longarg = false;
   bool longlongarg = false;
   bool uintptrarg = false;
-  const char* fmtstart;
+  const char* fmtstart = NULL;
   size_t pos = 0;
   for( ; *s; s++)
   {
