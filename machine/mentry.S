@@ -489,15 +489,6 @@ do_reset:
   csetbounds csp, csp, t0
   add t0, t0, -MENTRY_FRAME_SIZE
   csetoffset csp, csp, t0
-
-  # Zero out BSS
-  cllc ct0, _fbss
-  cllc ct1, _end
-  beq t0, t1, 2f
-1:csc c0, 0(ct0)
-  cincoffset ct0, ct0, REGBYTES
-  bne t0, t1, 1b
-2:
 #else
   csrw mscratch, x0
 
@@ -512,19 +503,27 @@ do_reset:
   csrr a3, mhartid
   slli a2, a3, RISCV_PGSHIFT
   add sp, sp, a2
+#endif
 
-  # Zero out BSS
-  lla t0, _fbss
-  lla t1, _end
+  bnez a3, .LmultiHartInit
+
+  # Zero out BSS; linker script provides alignment and padding
+#if __has_feature(capabilities)
+  cllc ct0, _fbss
+  cllc ct1, _end
+  beq t0, t1, 2f
+1:csc c0, 0(ct0)
+  cincoffset ct0, ct0, REGBYTES
+  bne t0, t1, 1b
+#else
+  la t0, _fbss
+  la t1, _end
   beq t0, t1, 2f
 1:STORE zero, 0(t0)
   addi t0, t0, REGBYTES
   bne t0, t1, 1b
-2:
 #endif
-
-  # Boot on the first hart
-  bnez a3, 2f
+2:
 
 #if __has_feature(capabilities)
   # Save a0/a1 with hartid/DTB from previous boot loader stage
@@ -542,8 +541,9 @@ do_reset:
 #endif
   j init_first_hart
 
+.LmultiHartInit:
   # set MSIE bit to receive IPI
-2:li a2, MIP_MSIP
+  li a2, MIP_MSIP
   csrw mie, a2
 
 .LmultiHart:
