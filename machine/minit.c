@@ -234,7 +234,7 @@ void setup_pmp(void)
                 "csrw pmpcfg0, %0\n\t"
                 ".align 2\n\t"
                 "1: cspecialw mtcc, ct0"
-                : : "r" (pmpc), "r" (-1UL) : "t0");
+                : : "r" (pmpc), "r" (-1UL) : "ct0");
 #else
   asm volatile ("la t0, 1f\n\t"
                 "csrrw t0, mtvec, t0\n\t"
