@@ -44,7 +44,7 @@ def maybeArchiveArtifacts(params, String base, String architecture) {
 cp tarball/opt/${base}-baremetal-${architecture}/bbl ${base}-${architecture}
 """
             archiveArtifacts allowEmptyArchive: false, artifacts: "${base}-${architecture}", fingerprint: true, onlyIfSuccessful: true
-            if (base == "qemu" && architecture == "riscv64-purecap") {
+            if (base == "bbl-qemu" && architecture == "riscv64-purecap") {
                 sh """
 cp tarball/opt/${base}-baremetal-${architecture}/share/qemu/*.bin ./
 """
