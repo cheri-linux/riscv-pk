@@ -382,7 +382,13 @@ __redirect_trap:
 
   .type __trap_from_machine_mode, @function
 __trap_from_machine_mode:
+#ifdef __CHERI_PURE_CAPABILITY__
+  // TODO: Use cjal instead once supported
+  cllc cra, trap_from_machine_mode
+  cjalr cra
+#else
   jal trap_from_machine_mode
+#endif
   j restore_regs
 .size __trap_from_machine_mode, . - __trap_from_machine_mode
 
