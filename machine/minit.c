@@ -153,14 +153,14 @@ static void hpm_init()
 #define EVENT_DCACHE_STORE           0x33
 #define EVENT_DCACHE_STORE_MISS      0x34
 
-#define EVENT_LLCACHE_LOAD_MISS      0x00 // TODO
-#define EVENT_LLCACHE_LOAD_MISS_WAIT 0x00 // TODO
+#define EVENT_LLCACHE_LOAD_MISS      0x61
+#define EVENT_LLCACHE_LOAD_MISS_WAIT 0x62
 
-#define EVENT_TAGCACHE_LOAD          0x4e
-#define EVENT_TAGCACHE_LOAD_MISS     0x4f
-#define EVENT_TAGCACHE_STORE         0x4c
-#define EVENT_TAGCACHE_STORE_MISS    0x4d
-#define EVENT_TAGCACHE_EVICT         0x50
+#define EVENT_TAGCACHE_LOAD          0x70
+#define EVENT_TAGCACHE_LOAD_MISS     0x71
+#define EVENT_TAGCACHE_STORE         0x73
+#define EVENT_TAGCACHE_STORE_MISS    0x74
+#define EVENT_TAGCACHE_EVICT         0x7d
 
 // TODO have those derived from a config file? What's an appropriate mechanism?
 #define EVENT_3  EVENT_REDIRECT
