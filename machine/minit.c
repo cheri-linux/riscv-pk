@@ -139,7 +139,7 @@ static void hpm_init()
 #define EVENT_CAP_LOAD_TAG_SET       0x1c
 #define EVENT_CAP_STORE_TAG_SET      0x1d
 
-#define EVENT_ITLB_MISS_WAIT         0x2b
+#define EVENT_ITLB_MISS              0x2a
 #define EVENT_ICACHE_LOAD            0x20
 #define EVENT_ICACHE_LOAD_MISS       0x21
 #define EVENT_ICACHE_LOAD_MISS_WAIT  0x22
@@ -157,11 +157,11 @@ static void hpm_init()
 #define EVENT_LLCACHE_FILL_WAIT      0x62
 #define EVENT_LLCACHE_EVICT          0x64
 
-#define EVENT_TAGCACHE_LOAD          0x70
-#define EVENT_TAGCACHE_LOAD_MISS     0x71
-#define EVENT_TAGCACHE_STORE         0x73
-#define EVENT_TAGCACHE_STORE_MISS    0x74
-#define EVENT_TAGCACHE_EVICT         0x7d
+#define EVENT_TAGCACHE_LOAD          0x42
+#define EVENT_TAGCACHE_LOAD_MISS     0x43
+#define EVENT_TAGCACHE_STORE         0x40
+#define EVENT_TAGCACHE_STORE_MISS    0x41
+#define EVENT_TAGCACHE_EVICT         0x44
 
 // TODO have those derived from a config file? What's an appropriate mechanism?
 #define EVENT_3  EVENT_REDIRECT
@@ -172,7 +172,7 @@ static void hpm_init()
 #define EVENT_8  EVENT_LOAD_WAIT
 #define EVENT_9  EVENT_CAP_LOAD_TAG_SET
 #define EVENT_10 EVENT_CAP_STORE_TAG_SET
-#define EVENT_11 EVENT_ITLB_MISS_WAIT
+#define EVENT_11 EVENT_ITLB_MISS
 #define EVENT_12 EVENT_ICACHE_LOAD
 #define EVENT_13 EVENT_ICACHE_LOAD_MISS
 #define EVENT_14 EVENT_ICACHE_LOAD_MISS_WAIT
