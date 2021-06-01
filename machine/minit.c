@@ -136,8 +136,8 @@ static void hpm_init()
 #define EVENT_TRAP                    0x2
 
 #define EVENT_LOAD_WAIT              0x10
-#define EVENT_CAP_LOAD_TAG_SET       0x1c
-#define EVENT_CAP_STORE_TAG_SET      0x1d
+#define EVENT_CAP_LOAD               0x1a
+#define EVENT_CAP_STORE              0x1b
 
 #define EVENT_ITLB_MISS              0x2a
 #define EVENT_ICACHE_LOAD            0x20
@@ -170,8 +170,8 @@ static void hpm_init()
 #define EVENT_6  EVENT_JALR
 #define EVENT_7  EVENT_TRAP
 #define EVENT_8  EVENT_LOAD_WAIT
-#define EVENT_9  EVENT_CAP_LOAD_TAG_SET
-#define EVENT_10 EVENT_CAP_STORE_TAG_SET
+#define EVENT_9  EVENT_CAP_LOAD
+#define EVENT_10 EVENT_CAP_STORE
 #define EVENT_11 EVENT_ITLB_MISS
 #define EVENT_12 EVENT_ICACHE_LOAD
 #define EVENT_13 EVENT_ICACHE_LOAD_MISS
