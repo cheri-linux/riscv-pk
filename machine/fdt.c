@@ -144,6 +144,22 @@ int fdt_string_list_index(const struct fdt_scan_prop *prop, const char *str)
   return -1;
 }
 
+void fdt_version_prop_print(const uint32_t *version_value, int version_len)
+{
+  const char *char_data = (const char *)version_value;
+  if (!char_data) {
+    char_data = "unknown";
+    version_len = strlen(char_data) + 1;
+  }
+  // There should only be one string, but print any extra strings if they appear
+  for (int i = 0; i < version_len; i += strlen(char_data + i) + 1) {
+    if (i != 0)
+      printm(", ");
+    printm("%s", char_data + i);
+  }
+  printm("\r\n");
+}
+
 //////////////////////////////////////////// MEMORY SCAN /////////////////////////////////////////
 
 struct mem_scan {
@@ -204,6 +220,56 @@ void query_mem(uintptr_t fdt)
   assert (mem_size > 0);
 }
 
+///////////////////////////////////////////// ROOT SCAN /////////////////////////////////////////
+
+struct root_scan {
+  const struct fdt_scan_node *root;
+  const uint32_t *version_value;
+  int version_len;
+};
+
+static void root_open(const struct fdt_scan_node *node, void *extra)
+{
+  struct root_scan *scan = (struct root_scan *)extra;
+  if (!scan->root) {
+    scan->root = node;
+  }
+}
+
+static void root_prop(const struct fdt_scan_prop *prop, void *extra)
+{
+  struct root_scan *scan = (struct root_scan *)extra;
+  if (!strcmp(prop->name, "sri-cambridge,version") && !scan->version_value) {
+    scan->version_value = prop->value;
+    scan->version_len = prop->len;
+  }
+}
+
+static int root_close(const struct fdt_scan_node *node, void *extra)
+{
+  struct root_scan *scan = (struct root_scan *)extra;
+  if (scan->root == node) {
+    printm("SoC version: ");
+    fdt_version_prop_print(scan->version_value, scan->version_len);
+  }
+  return 0;
+}
+
+void query_root(uintptr_t fdt)
+{
+  struct fdt_cb cb;
+  struct root_scan scan;
+
+  memset(&cb, 0, sizeof(cb));
+  memset(&scan, 0, sizeof(scan));
+  cb.open = root_open;
+  cb.prop = root_prop;
+  cb.close= root_close;
+  cb.extra = &scan;
+
+  fdt_scan(fdt, &cb);
+}
+
 ///////////////////////////////////////////// HART SCAN //////////////////////////////////////////
 
 static uint32_t hart_phandles[MAX_HARTS];
@@ -215,6 +281,8 @@ struct hart_scan {
   const struct fdt_scan_node *controller;
   int cells;
   uint32_t phandle;
+  const uint32_t *version_value;
+  int version_len;
 };
 
 static void hart_open(const struct fdt_scan_node *node, void *extra)
@@ -222,6 +290,8 @@ static void hart_open(const struct fdt_scan_node *node, void *extra)
   struct hart_scan *scan = (struct hart_scan *)extra;
   if (!scan->cpu) {
     scan->hart = -1;
+    scan->version_value = NULL;
+    scan->version_len = 0;
   }
   if (!scan->controller) {
     scan->cells = 0;
@@ -246,6 +316,9 @@ static void hart_prop(const struct fdt_scan_prop *prop, void *extra)
     uint64_t reg;
     fdt_get_address(prop->node->parent, prop->value, &reg);
     scan->hart = reg;
+  } else if (!strcmp(prop->name, "sri-cambridge,version")) {
+    scan->version_value = prop->value;
+    scan->version_len = prop->len;
   }
 }
 
@@ -255,6 +328,8 @@ static void hart_done(const struct fdt_scan_node *node, void *extra)
 
   if (scan->cpu == node) {
     assert (scan->hart >= 0);
+    printm("Hart %d version: ", scan->hart);
+    fdt_version_prop_print(scan->version_value, scan->version_len);
   }
 
   if (scan->controller == node && scan->cpu) {
