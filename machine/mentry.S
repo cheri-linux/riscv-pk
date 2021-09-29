@@ -383,9 +383,12 @@ __redirect_trap:
   .type __trap_from_machine_mode, @function
 __trap_from_machine_mode:
 #ifdef __CHERI_PURE_CAPABILITY__
-  // TODO: Use cjal instead once supported
+#ifdef __riscv_xcheri_mode_dependent_jumps
+  cjal trap_from_machine_mode
+#else
   cllc cra, trap_from_machine_mode
   cjalr cra
+#endif
 #else
   jal trap_from_machine_mode
 #endif
@@ -541,8 +544,12 @@ do_reset:
   mv s1, a1
 
   # Initialise captable
+#ifdef __riscv_xcheri_mode_dependent_jumps
+  ccall init_cap_globals
+#else
   cllc ct0, init_cap_globals
   cjalr cra, ct0
+#endif
 
   # Restore hartid/DTB for init_first_hart, and turn DTB into a capability
   mv a0, s0
