@@ -476,7 +476,11 @@ do_reset:
   csetoffset ct0, ct1, t0
   li t1, 1
   csetflags ct0, ct0, t1
+#ifdef __riscv_xcheri_mode_dependent_jumps
+  jr.cap ct0
+#else
   cjr ct0
+#endif
 1:
   .option capmode
 
