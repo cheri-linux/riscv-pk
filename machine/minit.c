@@ -315,12 +315,16 @@ static void hpm_init()
 static void hart_init()
 {
   mstatus_init();
+#ifndef BBL_GFE
   fp_init();
+#endif
   hpm_init();
 #ifndef BBL_BOOT_MACHINE
   delegate_traps();
 #endif /* BBL_BOOT_MACHINE */
+#ifndef BBL_GFE
   setup_pmp();
+#endif
 }
 
 static void plic_init()
@@ -377,7 +381,9 @@ static void wake_harts()
 void init_first_hart(uintptr_t hartid, uintptr_t dtb)
 {
   // Confirm console as early as possible
+#ifndef BBL_GFE
   query_uart(dtb);
+#endif
   query_uart16550(dtb);
   query_htif(dtb);
   printm("bbl loader\r\n");
@@ -395,7 +401,9 @@ void init_first_hart(uintptr_t hartid, uintptr_t dtb)
   query_plic(dtb);
   query_chosen(dtb);
 
+#ifndef BBL_GFE
   wake_harts();
+#endif
 
   plic_init();
   hart_plic_init();

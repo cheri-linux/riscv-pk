@@ -111,7 +111,7 @@ VPATH := $(addprefix $(src_dir)/, $(sprojs_enabled))
 CC            := @CC@
 READELF       := @READELF@
 OBJCOPY       := @OBJCOPY@
-CFLAGS        := @CFLAGS@ $(CFLAGS) $(march) $(mabi) -DBBL_LOGO_FILE=\"bbl_logo_file\" -DMEM_START=@MEM_START@ -fno-stack-protector -U_FORTIFY_SOURCE
+CFLAGS        := @CFLAGS@ $(CFLAGS) $(march) $(mabi) -DBBL_LOGO_FILE=\"bbl_logo_file\" -DMEM_START=@MEM_START@ -fno-stack-protector -U_FORTIFY_SOURCE -include config.h
 ifneq (@BBL_PAYLOAD@,no)
 CFLAGS        := $(CFLAGS) -DBBL_PAYLOAD=\"bbl_payload\"
 endif

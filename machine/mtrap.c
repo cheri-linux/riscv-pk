@@ -21,6 +21,7 @@ void __attribute__((noreturn)) bad_trap(uintptr_t* regs, uintptr_t dummy, uintpt
 
 static uintptr_t mcall_console_putchar(uint8_t ch)
 {
+#ifndef BBL_GFE
   if (uart) {
     uart_putchar(ch);
   } else if (uart16550) {
@@ -28,6 +29,9 @@ static uintptr_t mcall_console_putchar(uint8_t ch)
   } else if (htif) {
     htif_console_putchar(ch);
   }
+#else
+  uart16550_putchar(ch);
+#endif
   return 0;
 }
 
@@ -154,7 +158,9 @@ void mcall_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
     case SBI_REMOTE_FENCE_I:
       ipi_type = IPI_FENCE_I;
 send_ipi:
+#ifndef BBL_GFE
       send_ipi_many((uintptr_t*)arg0, ipi_type);
+#endif
       retval = 0;
       break;
     case SBI_CLEAR_IPI:
@@ -254,11 +260,16 @@ void trap_from_machine_mode(uintptr_t* regs, uintptr_t dummy, uintptr_t mepc)
 void poweroff(uint16_t code)
 {
   printm("Power off\r\n");
+#ifdef BBL_GFE
+  while (1);
+#endif
   finisher_exit(code);
   if (htif) {
     htif_poweroff();
   } else {
     send_ipi_many(0, IPI_HALT);
+#ifndef BBL_GFE
     while (1) { asm volatile ("wfi\n"); }
+#endif
   }
 }

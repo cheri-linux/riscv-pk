@@ -4,7 +4,11 @@
 #include "encoding.h"
 #include "fdt.h"
 
+#ifndef BBL_GFE
 volatile uint8_t* uart16550;
+#else
+volatile uint32_t* uart16550 = 0;
+#endif
 // some devices require a shifted register index
 // (e.g. 32 bit registers instead of 8 bit registers)
 static uint32_t uart16550_reg_shift;
@@ -96,6 +100,9 @@ static void uart16550_done(const struct fdt_scan_node *node, void *extra)
 
   uart16550 = ptr_to_ddccap((void*)((uintptr_t)scan->reg + scan->reg_offset));
   uart16550_reg_shift = scan->reg_shift;
+#ifdef BBL_GFE
+  uart16550_reg_shift = 0;
+#endif
   // http://wiki.osdev.org/Serial_Ports
   uart16550[UART_REG_IER << uart16550_reg_shift] = 0x00;                // Disable all interrupts
   uart16550[UART_REG_LCR << uart16550_reg_shift] = 0x80;                // Enable DLAB (set baud rate divisor)
@@ -103,6 +110,7 @@ static void uart16550_done(const struct fdt_scan_node *node, void *extra)
   uart16550[UART_REG_DLM << uart16550_reg_shift] = (uint8_t)(divisor >> 8);     //     (hi byte)
   uart16550[UART_REG_LCR << uart16550_reg_shift] = 0x03;                // 8 bits, no parity, one stop bit
   uart16550[UART_REG_FCR << uart16550_reg_shift] = 0xC7;                // Enable FIFO, clear them, with 14-byte threshold
+
 }
 
 void query_uart16550(uintptr_t fdt)

@@ -106,6 +106,11 @@ AC_ARG_WITH([mem-start], AS_HELP_STRING([--with-mem-start], [Set physical memory
    AC_SUBST([MEM_START], [0x80000000], [Physical memory start address])
   ])
 
+AC_ARG_ENABLE([board-gfe], AS_HELP_STRING([--enable-board-gfe], [Enable GFE board]))
+AS_IF([test "x$enable_board_gfe" = "xyes"], [
+  AC_DEFINE([BBL_GFE],,[Define if GFE board is enabled])
+])
+
 #-------------------------------------------------------------------------
 # MCPPBS subproject list
 #-------------------------------------------------------------------------

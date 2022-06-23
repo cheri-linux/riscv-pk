@@ -6,6 +6,9 @@
 /* Define if subproject MCPPBS_SPROJ_NORM is enabled */
 #undef BBL_ENABLED
 
+/* Define if GFE board is enabled */
+#undef BBL_GFE
+
 /* Define if subproject MCPPBS_SPROJ_NORM is enabled */
 #undef DUMMY_PAYLOAD_ENABLED
 
